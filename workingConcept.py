@@ -13,16 +13,25 @@ import json
 import pandas as pd
 # import gyzip
 
+#import gridded netcdf data from a file
 grid_file = 'xmdl_grid.nc'
+
+#read netcdf data
 grid = pyart.io.grid_io.read_grid('xmdl_grid.nc')
+
+#open dataset within gridded file
 dataset = xr.open_dataset(grid_file)
+
+#set the list of all the variables in the dataset to another variable
 variables = list(dataset.variables)
 
+#get the longitude, latitude and horizontal reflectivity of the data into variables
 lats = grid.point_latitude['data']
 lons = grid.point_longitude['data']
 zh = grid.fields['Reflectivity']['data']
 # time = grid.variables['units']
 
+#create empty arrays for holding the latitude, longitude, reflectivity and timestamp data
 latitude = []
 longitude = []
 reflectivity = []
@@ -31,6 +40,7 @@ times = []
 # print(variables)
 # print(grid.origin_longitude['data'][0])
 
+#Create an array with all of the data in a stacked format compatible with converting to JSON
 latLonRefArray = np.stack([lats.ravel(), lons.ravel(), zh.ravel()], axis = 1)
 
 # arrangedArray = pd.DataFrame(latLonRefArray, columns=['latitude', 'longitude', 'zh'])
@@ -44,16 +54,24 @@ latLonRefArray = np.stack([lats.ravel(), lons.ravel(), zh.ravel()], axis = 1)
 
 
 # f = open("jsonVersionTest.json", "w+")
+
+#create an object of all of the data and save it to a variable called results
 results = {"outputData": latLonRefArray.tolist()}
+
+#format the data with indentation
 json_string = json.dumps(results, indent=2)
+
+#encode the json string into utf-8 format
 json_bytes = json_string.encode('utf-8')
+
 # json_string = json.dumps(results, indent=2)
 # f.write(json_string)
 # with gzip.open("outputTest.json", 'w+') as fout:
 #     # json_string = json.dumps(results, indent=2)
 #     fout.write(json_string)
 
-with gzip.GzipFile("outputTest.json.gz", 'w') as fout:
+#write the resulting JSON to a zipped file
+with gzip.GzipFile("nextTest.json.gz", 'w') as fout:
     fout.write(json_bytes)
 
 # arrangedArray.to_json('pandasFileTest.json', index=False, orient='table', double_precision=6)
