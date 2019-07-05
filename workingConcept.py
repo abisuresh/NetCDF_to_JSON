@@ -28,7 +28,7 @@ longitude = []
 reflectivity = []
 times = []
 
-# print(vars)
+# print(variables)
 # print(grid.origin_longitude['data'][0])
 
 latLonRefArray = np.stack([lats.ravel(), lons.ravel(), zh.ravel()], axis = 1)
@@ -40,14 +40,20 @@ latLonRefArray = np.stack([lats.ravel(), lons.ravel(), zh.ravel()], axis = 1)
 
 # print(lats)
 # print(lons)
+#
 
-# f= open("jsonVersionTest.json", "w+")
+
+# f = open("jsonVersionTest.json", "w+")
 results = {"outputData": latLonRefArray.tolist()}
+json_string = json.dumps(results, indent=2)
+json_bytes = json_string.encode('utf-8')
 # json_string = json.dumps(results, indent=2)
 # f.write(json_string)
-with gzip.open("zipVersionTest.json", 'wb') as f:
-    json_string = json.dumps(results, indent=2)
-    f.write(json_string)
+# with gzip.open("outputTest.json", 'w+') as fout:
+#     # json_string = json.dumps(results, indent=2)
+#     fout.write(json_string)
 
+with gzip.GzipFile("outputTest.json.gz", 'w') as fout:
+    fout.write(json_bytes)
 
 # arrangedArray.to_json('pandasFileTest.json', index=False, orient='table', double_precision=6)
