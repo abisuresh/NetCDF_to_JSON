@@ -50,8 +50,6 @@ latLonRefArray = np.stack([lats.ravel(), lons.ravel(), zh.ravel()], axis = 1)
 
 # print(lats)
 # print(lons)
-#
-
 
 # f = open("jsonVersionTest.json", "w+")
 
